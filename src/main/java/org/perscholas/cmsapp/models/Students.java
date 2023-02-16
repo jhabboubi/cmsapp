@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -17,7 +17,6 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Students {
@@ -38,4 +37,16 @@ public class Students {
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     Set<Course> courses = new LinkedHashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Students students = (Students) o;
+        return id.equals(students.id) && name.equals(students.name) && email.equals(students.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email);
+    }
 }
