@@ -19,6 +19,32 @@
           <p class="text-center" th:text="${info}"></p>
         </article>
       </section>
+      <section class="row">
+        <article class="col">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Courses</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="s: ${allStudents}">
+                <th scope="row" th:text="${s.id}"></th>
+                <td th:text="${s.name}"></td>
+                <td th:text="${s.email}"></td>
+                <td>
+                  <span th:each="c: ${s.courses}">
+                    <span th:text="' | ' + ${c.name} + ' | '"></span>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
     </main>
 
     <script
@@ -27,5 +53,12 @@
       crossorigin="anonymous"
     ></script>
     <script th:src="@{/javascript/scripts.js}"></script>
+
+    <script>
+      fetch("http://localhost:8080/getAllStudents")
+        .then((response) => response.json())
+        .then((data) => console.log(data)) // output will be the required data
+        .catch((error) => console.log(error));
+    </script>
   </body>
 </html>

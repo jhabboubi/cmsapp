@@ -1,5 +1,6 @@
 package org.perscholas.cmsapp.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,7 +31,8 @@ public class Students {
     String email;
 
 
-    @ToString.Exclude
+
+    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "student_courses",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
@@ -48,5 +50,19 @@ public class Students {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email);
+    }
+
+    public void addCourse(Course course) {
+        courses.add(course);
+        course.getStudents().add(this);
+    }
+
+    public boolean removeCourse(Course course){
+        courses.remove(course);
+        course.getStudents().remove(this);
+        if(courses.contains(course) || course.getStudents().contains(this))
+            return false;
+        else
+            return true;
     }
 }
