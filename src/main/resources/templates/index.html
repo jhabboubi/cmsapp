@@ -53,12 +53,34 @@
       crossorigin="anonymous"
     ></script>
     <script th:src="@{/javascript/scripts.js}"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.3/axios.min.js"
+      integrity="sha512-wS6VWtjvRcylhyoArkahZUkzZFeKB7ch/MHukprGSh1XIidNvHG1rxPhyFnL73M0FC1YXPIXLRDAoOyRJNni/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
     <script>
-      fetch("http://localhost:8080/getAllStudents")
-        .then((response) => response.json())
-        .then((data) => console.log(data)) // output will be the required data
+      //   fetch("http://localhost:8080/getAllStudents")
+      //     .then((response) => response.json())
+      //     .then((data) => console.log(data)) // output will be the required data
+      //     .catch((error) => console.log(error));
+      var d;
+      axios
+        .get("http://localhost:8080/getAllStudents")
+        .then((response) => {
+          console.log(response);
+        }) //output will be the required data
         .catch((error) => console.log(error));
+
+      async function doGetRequest() {
+        let res = await axios.get("http://localhost:8080/getAllStudents");
+
+        let data = res.data;
+        console.log(data[0]);
+      }
+
+      doGetRequest();
     </script>
   </body>
 </html>

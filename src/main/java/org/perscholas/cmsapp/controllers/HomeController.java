@@ -1,6 +1,8 @@
 package org.perscholas.cmsapp.controllers;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.perscholas.cmsapp.dao.CoursesRepoI;
 import org.perscholas.cmsapp.dao.StudentsRepoI;
@@ -11,11 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 
 
 @Controller
 @Slf4j
+@SessionAttributes(value = {"currentUser"})
 public class HomeController {
 
     StudentsRepoI studentsRepoI;
@@ -26,9 +30,13 @@ public class HomeController {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
     }
-
+    @ModelAttribute
+    public void initStu(Model model){
+        model.addAttribute("currentUser", new Students());
+        log.warn("new students instantiated");
+    }
     @GetMapping(value = {"/", "index"})
-    public String homePage(Model model){
+    public String homePage(Model model, HttpServletRequest httpServletRequest){
         log.info("i am in the index controller method");
 
         List<Students> allStud = studentsRepoI.findAll();
@@ -38,8 +46,17 @@ public class HomeController {
 
         model.addAttribute("info", s);
         model.addAttribute("allStudents", allStud);
+        HttpSession httpSession = httpServletRequest.getSession();
+        try {
+            httpSession.setAttribute("currentUser", s);
+            log.info("session ID: " + httpSession.getId() + " Value of currentUser: " + httpSession.getAttribute("currentUser"));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return "index";
     }
+
+
 
     @GetMapping("/studentform")
     public String studentForm(Model model){
