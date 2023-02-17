@@ -27,10 +27,11 @@ public class Students {
     @NonNull
     String name;
     @NonNull
+
     String email;
 
 
-    @ToString.Exclude
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "student_courses",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
@@ -48,5 +49,10 @@ public class Students {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email);
+    }
+
+    public void addCourse(Course course){
+        courses.add(course);
+        course.getStudents().add(this);
     }
 }

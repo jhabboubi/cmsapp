@@ -42,17 +42,28 @@ public class MyCommandLineRunner implements CommandLineRunner {
         Students student2 = new Students(444, "Mohammed", "Mohammed@gmail.com");
         Students student3 = new Students(555, "Anjana", "Anjana@gmail.com");
 
-        studentsRepoI.save(student);
-        studentsRepoI.save(student2);
-        studentsRepoI.save(student3);
+        studentsRepoI.saveAndFlush(student);
+        studentsRepoI.saveAndFlush(student2);
+        studentsRepoI.saveAndFlush(student3);
 
         Course course = new Course(1, "java", "Jafer");
         Course course2 = new Course(2, "spring", "Kevin");
         Course course3 = new Course(3, "sql", "Tyron");
 
-        coursesRepoI.save(course);
-        coursesRepoI.save(course2);
-        coursesRepoI.save(course3);
+        coursesRepoI.saveAndFlush(course);
+        coursesRepoI.saveAndFlush(course2);
+        coursesRepoI.saveAndFlush(course3);
+
+        student.addCourse(course);
+        student.addCourse(course2);
+
+        studentsRepoI.saveAndFlush(student);
+
+        student2.addCourse(course);
+        studentsRepoI.saveAndFlush(student2);
+
+
+
 
     }
 }

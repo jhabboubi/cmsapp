@@ -16,27 +16,7 @@
     <main class="container">
       <section class="row m-1">
         <article class="col">
-          <p class="text-center" th:text="${info}"></p>
-        </article>
-        <article class="row">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Course</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="stu: ${allStu}">
-                <th scope="row" th:text="${stu.id}"></th>
-                <td th:text="${stu.name}"></td>
-                <td th:text="${stu.email}"></td>
-                <td th:text="${stu.courses}"></td>
-              </tr>
-            </tbody>
-          </table>
+          <h1>Model Page</h1>
         </article>
       </section>
     </main>
@@ -53,15 +33,6 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script>
-      async function doGetRequest() {
-        let res = await axios.get("http://localhost:8080/api/getAllStudents");
 
-        let data = res.data;
-        console.log(data);
-      }
-
-      doGetRequest();
-    </script>
   </body>
 </html>
