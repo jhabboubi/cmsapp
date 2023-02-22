@@ -46,7 +46,6 @@ public class MyCommandLineRunner implements CommandLineRunner {
         studentsRepoI.saveAndFlush(student2);
         studentsRepoI.saveAndFlush(student3);
 
-
         Course course = new Course(1, "java", "Jafer");
         Course course2 = new Course(2, "spring", "Kevin");
         Course course3 = new Course(3, "sql", "Tyron");
@@ -57,15 +56,14 @@ public class MyCommandLineRunner implements CommandLineRunner {
 
         student.addCourse(course);
         student.addCourse(course2);
-        student.addCourse(course3);
+
         studentsRepoI.saveAndFlush(student);
 
-
         student2.addCourse(course);
-        student2.addCourse(course2);
         studentsRepoI.saveAndFlush(student2);
-        student2.removeCourse(course2);
-        studentsRepoI.saveAndFlush(student2);
+
+
+
 
     }
 }

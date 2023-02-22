@@ -1,6 +1,5 @@
 package org.perscholas.cmsapp.controllers;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
 import java.util.List;
-
 
 @Controller
 @Slf4j
-@SessionAttributes(value = {"currentUser"})
+@SessionAttributes(value = {"msg"})
 public class HomeController {
 
     StudentsRepoI studentsRepoI;
@@ -30,40 +27,51 @@ public class HomeController {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
     }
+
     @ModelAttribute
-    public void initStu(Model model){
-        model.addAttribute("currentUser", new Students());
-        log.warn("new students instantiated");
+    public void initModel(Model model){
+        model.addAttribute("msg", "Hello world");
     }
+
+    @GetMapping("/model")
+    public String model(Model model, HttpServletRequest httpServletRequest){
+        log.warn(model.getAttribute("msg").toString());
+        HttpSession session = httpServletRequest.getSession();
+        log.warn(session.getId());
+        session.setAttribute("msg", "changed in model method!!");
+
+
+
+        return "model_page";
+    }
+
     @GetMapping(value = {"/", "index"})
-    public String homePage(Model model, HttpServletRequest httpServletRequest){
+    public String homePage(Model model, HttpServletRequest request){
+
+
         log.info("i am in the index controller method");
 
         List<Students> allStud = studentsRepoI.findAll();
 
         Students s = allStud.get(allStud.size()-1);
 
-
+        model.addAttribute("allStu",allStud);
         model.addAttribute("info", s);
-        model.addAttribute("allStudents", allStud);
-        HttpSession httpSession = httpServletRequest.getSession();
-        try {
-            httpSession.setAttribute("currentUser", s);
-            log.info("session ID: " + httpSession.getId() + " Value of currentUser: " + httpSession.getAttribute("currentUser"));
-        } catch (Exception e){
-            e.printStackTrace();
+        for(Students x: allStud){
+            System.out.println(x);
         }
         return "index";
     }
 
-
-
     @GetMapping("/studentform")
     public String studentForm(Model model){
         model.addAttribute("student", new Students());
+
         log.warn("student form method");
         return "form";
     }
+
+
 
     @PostMapping("/s")
     public String studentProcess(@ModelAttribute("student") Students students){
@@ -73,48 +81,32 @@ public class HomeController {
         log.warn(students.toString());
         studentsRepoI.save(students);
 
-        return "redirect:/";
+        return "form";
     }
-
-    @ModelAttribute("search")
-    public String searchInit(){
-        return "no email";
-    }
-    @GetMapping("/search")
-    public String showSearch(Model model){
-        try {
-
-            if(model.containsAttribute("search"))
-                log.warn(model.getAttribute("search").toString());
-            else
-                log.warn("empty search attribute!");
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return "search";
-    }
-
-    @PostMapping("/search_execute")
-    public String showSearch(@RequestParam("search") String email, RedirectAttributes redirectAttributes) {
-
-        try {
-            Students s = studentsRepoI.findByEmail(email).orElseThrow();
-            log.warn(s.toString());
-            log.warn("get method search");
-            redirectAttributes.addFlashAttribute("search", s);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return "redirect:/search";
-    }
-
+ // @Controller
     @ResponseBody
-    @GetMapping("getAllStudents")
+    @GetMapping("/api/getAllStudents")
     public List<Students> getAllStudents(){
         return studentsRepoI.findAll();
     }
 
+    @GetMapping("/getform")
+    public String getTheForm(){
+        return "form_requestparam";
+    }
+
+    @GetMapping("/path/{id}/{ddd}/{dddd}")
+    public String getUserWithID(@PathVariable(name = "id") int id){
+        log.warn(String.valueOf(id));
+        log.warn(studentsRepoI.findById(id).toString());
+        return "form_requestparam";
+    }
+
+    @PostMapping("/request")
+    public String requestParam(@RequestParam("id") int id, @RequestParam("name") String name, @RequestParam("email") String email){
+        log.warn(String.format("my id is %d and my name is %s. email: %s", id, name,email));
+        return "form_requestparam";
+    }
 
 
 
