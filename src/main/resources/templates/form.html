@@ -27,9 +27,7 @@
                 aria-describedby="emailHelp"
                 th:field="*{id}"
               />
-              <div id="emailHelp" class="form-text">
-                We'll never share your ID with anyone else.
-              </div>
+              <span th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="error text-warning"></span>
             </div>
             <div class="mb-3">
               <label for="fullname" class="form-label">Name</label>
@@ -40,6 +38,7 @@
                 name="name"
                 th:field="*{name}"
               />
+              <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error text-warning"></span>
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
@@ -49,7 +48,20 @@
                 id="email"
                 th:field="*{email}"
               />
+              <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error text-warning"></span>
             </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      th:field="*{password}"
+              />
+              <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error text-warning"></span>
+            </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </article>

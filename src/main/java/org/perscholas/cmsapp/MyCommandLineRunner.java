@@ -10,6 +10,7 @@ import org.perscholas.cmsapp.models.Course;
 import org.perscholas.cmsapp.models.Students;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,34 +36,60 @@ public class MyCommandLineRunner implements CommandLineRunner {
         log.warn("=============== My CommandLineRunner Got Created ===============");
     }
 
+    @Async
     @Override
     public void run(String... args) throws Exception {
 
-        Students student = new Students(123, "Jafer", "Jafer@gmail.com");
-        Students student2 = new Students(444, "Mohammed", "Mohammed@gmail.com");
-        Students student3 = new Students(555, "Anjana", "Anjana@gmail.com");
+        try {
+            Students student = new Students("Jafer", "Jafer@gmail.com", "password");
+            Students student2 = new Students("Mohammed", "Mohammed@gmail.com", "password");
+            Students student3 = new Students("Anjana", "Anjana@gmail.com", "password");
 
-        studentsRepoI.saveAndFlush(student);
-        studentsRepoI.saveAndFlush(student2);
-        studentsRepoI.saveAndFlush(student3);
+            student = studentsRepoI.saveAndFlush(student);
+            log.debug(student.toString());
+            student2 = studentsRepoI.saveAndFlush(student2);
+            log.debug(student2.toString());
 
-        Course course = new Course(1, "java", "Jafer");
-        Course course2 = new Course(2, "spring", "Kevin");
-        Course course3 = new Course(3, "sql", "Tyron");
+            student3 = studentsRepoI.saveAndFlush(student3);
+            log.debug(student3.toString());
 
-        coursesRepoI.saveAndFlush(course);
-        coursesRepoI.saveAndFlush(course2);
-        coursesRepoI.saveAndFlush(course3);
+            Course course = new Course(1412, "java", "Jafer");
+            Course course2 = new Course(2312, "spring", "Kevin");
+            Course course3 = new Course(3232, "sql", "Tyron");
 
-        student.addCourse(course);
-        student.addCourse(course2);
+            course = coursesRepoI.saveAndFlush(course);
+            course2 = coursesRepoI.saveAndFlush(course2);
+            course3 = coursesRepoI.saveAndFlush(course3);
 
-        studentsRepoI.saveAndFlush(student);
+            student.addCourse(course);
+            student.addCourse(course2);
 
-        student2.addCourse(course);
-        studentsRepoI.saveAndFlush(student2);
+            studentsRepoI.saveAndFlush(student);
+            log.debug("s 1 : after courses"+ student.toString());
 
 
+            student2.addCourse(course3);
+            studentsRepoI.saveAndFlush(student2);
+            log.debug("s 2 : after courses"+ student2.toString());
+
+
+
+//            (new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        Thread.sleep(1000);
+//                        Students ss = studentsRepoI.findByEmail("Anjana@gmail.com").get();
+//                        ss.addCourse(coursesRepoI.findById(3232).get());
+//                        ss = studentsRepoI.saveAndFlush(ss);
+//                        log.warn("s 3 : after courses"+ ss.toString());
+//                    } catch (InterruptedException e) {}
+//                }
+//            })).start();
+
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
 
     }

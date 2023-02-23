@@ -2,16 +2,23 @@ package org.perscholas.cmsapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.perscholas.cmsapp.dao.CoursesRepoI;
 import org.perscholas.cmsapp.dao.StudentsRepoI;
+import org.perscholas.cmsapp.dto.StudentDTO;
+import org.perscholas.cmsapp.exceptions.MyExceptions;
 import org.perscholas.cmsapp.models.Students;
+import org.perscholas.cmsapp.service.StudentCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
+import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 
 @Controller
@@ -21,11 +28,13 @@ public class HomeController {
 
     StudentsRepoI studentsRepoI;
     CoursesRepoI coursesRepoI;
+    StudentCoursesService studentCoursesService;
 
     @Autowired
-    public HomeController(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI) {
+    public HomeController(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI,StudentCoursesService studentCoursesService) {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
+        this.studentCoursesService = studentCoursesService;
     }
 
     @ModelAttribute
@@ -52,8 +61,11 @@ public class HomeController {
         log.info("i am in the index controller method");
 
         List<Students> allStud = studentsRepoI.findAll();
+        List<Students> allStud2 = studentsRepoI.findAll(Sort.by("name").descending());
+        allStud2.forEach((s)-> log.debug(s.getName() + " | "));
 
         Students s = allStud.get(allStud.size()-1);
+
 
         model.addAttribute("allStu",allStud);
         model.addAttribute("info", s);
@@ -71,23 +83,27 @@ public class HomeController {
         return "form";
     }
 
-
-
     @PostMapping("/s")
-    public String studentProcess(@ModelAttribute("student") Students students){
+    public String studentProcess(@Valid @ModelAttribute("student") Students students, BindingResult bindingResult){
 
+        if(bindingResult.hasErrors()){
+            log.error("Student has errors: " + students);
+            log.error(bindingResult.getAllErrors().toString());
+            return "form";
+        }
 
+        students = studentsRepoI.save(students);
         log.warn("student process method" + students);
         log.warn(students.toString());
-        studentsRepoI.save(students);
+        log.info("successfully persisted into database");
 
         return "form";
     }
  // @Controller
     @ResponseBody
     @GetMapping("/api/getAllStudents")
-    public List<Students> getAllStudents(){
-        return studentsRepoI.findAll();
+    public List<StudentDTO> getAllStudents() throws MyExceptions {
+        return studentCoursesService.getAllStudents();
     }
 
     @GetMapping("/getform")
@@ -95,7 +111,7 @@ public class HomeController {
         return "form_requestparam";
     }
 
-    @GetMapping("/path/{id}/{ddd}/{dddd}")
+    @GetMapping("/path/{id}")
     public String getUserWithID(@PathVariable(name = "id") int id){
         log.warn(String.valueOf(id));
         log.warn(studentsRepoI.findById(id).toString());
