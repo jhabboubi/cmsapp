@@ -38,9 +38,9 @@ public class MyCommandLineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Students student = new Students(123, "Jafer", "Jafer@gmail.com");
-        Students student2 = new Students(444, "Mohammed", "Mohammed@gmail.com");
-        Students student3 = new Students(555, "Anjana", "Anjana@gmail.com");
+        Students student = new Students(123, "Jafer", "Jafer@gmail.com",  "password");
+        Students student2 = new Students(444, "Mohammed", "Mohammed@gmail.com",  "password");
+        Students student3 = new Students(555, "Anjana", "Anjana@gmail.com",  "password");
 
         studentsRepoI.saveAndFlush(student);
         studentsRepoI.saveAndFlush(student2);

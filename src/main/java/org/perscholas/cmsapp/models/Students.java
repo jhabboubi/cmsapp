@@ -1,6 +1,8 @@
 package org.perscholas.cmsapp.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +23,24 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Students {
 
-    @Id @NonNull
+    @Id @NonNull@NotNull
     Integer id;
 
     @NonNull
+    @NotBlank(message = "Please provide a name.")
+    @Size(min = 2, max = 20, message = "Please provide a name of length 2 to 20.")
+
     String name;
     @NonNull
-
+    @Email(message = "Provide a valid email address.", regexp = ".+@.+\\..+")
     String email;
 
+    @NonNull
+    String password;
 
 
+
+    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "student_courses",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
@@ -54,5 +63,10 @@ public class Students {
     public void addCourse(Course course){
         courses.add(course);
         course.getStudents().add(this);
+    }
+
+    public void removeCourse(Course course){
+        courses.remove(course);
+        course.getStudents().remove(this);
     }
 }

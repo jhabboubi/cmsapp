@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.perscholas.cmsapp.dto.StudentDTO;
 import org.perscholas.cmsapp.dao.CoursesRepoI;
 import org.perscholas.cmsapp.dao.StudentsRepoI;
+import org.perscholas.cmsapp.dto.StudentDTO;
 import org.perscholas.cmsapp.models.Students;
 import org.perscholas.cmsapp.service.StudentAndCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,13 +20,14 @@ import java.util.List;
 @Controller
 @Slf4j
 @SessionAttributes(value = {"msg"})
-public class HomeController {
+@RequestMapping("test")
+public class AnotherController {
 
     StudentsRepoI studentsRepoI;
     CoursesRepoI coursesRepoI;
     StudentAndCoursesService studentAndCoursesService;
     @Autowired
-    public HomeController(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI, StudentAndCoursesService studentAndCoursesService) {
+    public AnotherController(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI, StudentAndCoursesService studentAndCoursesService) {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
         this.studentAndCoursesService = studentAndCoursesService;
@@ -59,7 +59,6 @@ public class HomeController {
         log.info("i am in the index controller method");
 
         List<Students> allStud = studentAndCoursesService.getAllStudents();
-        List<Students> allStud2 = studentsRepoI.findAll(Sort.by("name").descending().and(Sort.by("id").ascending()));
 
         Students s = allStud.get(allStud.size()-1);
 

@@ -1,5 +1,6 @@
 package org.perscholas.cmsapp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,6 +30,7 @@ public class Course {
     @NonNull
     String instructor;
 
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "courses", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private Set<Students> students = new LinkedHashSet<>();
 

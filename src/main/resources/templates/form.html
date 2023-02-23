@@ -16,7 +16,7 @@
     <main class="container">
       <section class="row m-1">
         <article class="col">
-          <form method="post" th:action="@{/s}" th:object="${student}">
+          <form method="post" th:action="@{/s}" th:object="${student}" novalidate>
             <div class="mb-3">
               <label for="id" class="form-label">ID</label>
               <input
@@ -26,7 +26,9 @@
                 name="id"
                 aria-describedby="emailHelp"
                 th:field="*{id}"
+
               />
+              <span th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="error text-warning text-danger"></span>
               <div id="emailHelp" class="form-text">
                 We'll never share your ID with anyone else.
               </div>
@@ -40,17 +42,23 @@
                 name="name"
                 th:field="*{name}"
               />
+              <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error text-warning text-danger"></span>
+
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input
-                type="email"
+                type="text"
                 class="form-control"
                 id="email"
                 th:field="*{email}"
               />
+
+              <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error text-warning text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
+            <span th:if="${inserted}" th:text="${inserted}" class="error text-warning text-danger"></span>
+
           </form>
         </article>
       </section>
