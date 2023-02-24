@@ -37,17 +37,15 @@ public class HomeController {
         this.studentCoursesService = studentCoursesService;
     }
 
-    @ModelAttribute
-    public void initModel(Model model){
-        model.addAttribute("msg", "Hello world");
-    }
+
 
     @GetMapping("/model")
-    public String model(Model model, HttpServletRequest httpServletRequest){
-        log.warn(model.getAttribute("msg").toString());
-        HttpSession session = httpServletRequest.getSession();
-        log.warn(session.getId());
-        session.setAttribute("msg", "changed in model method!!");
+    public String model( HttpSession http, Model model, @ModelAttribute("msg") String msg){
+        log.warn("first call: " + msg);
+        log.warn(http.getId());
+        model.addAttribute("msg","hello world 222");
+        log.warn("containsAttribute(\"msg\")" + String.valueOf(model.containsAttribute("msg")));
+        log.warn((String) model.getAttribute("msg"));
 
 
 
@@ -76,10 +74,16 @@ public class HomeController {
     }
 
     @GetMapping("/studentform")
-    public String studentForm(Model model){
+    public String studentForm(Model model,@SessionAttribute("msg") String msg, HttpSession http){
         model.addAttribute("student", new Students());
 
         log.warn("student form method");
+        log.warn("second call: " + msg);
+        log.warn(http.getId());
+        model.addAttribute("msg","hello world 333");
+        log.warn("containsAttribute(\"msg\")" + String.valueOf(model.containsAttribute("msg")));
+        log.warn((String) model.getAttribute("msg"));
+
         return "form";
     }
 
@@ -107,7 +111,13 @@ public class HomeController {
     }
 
     @GetMapping("/getform")
-    public String getTheForm(){
+    public String getTheForm(Model model, HttpSession http){
+        log.warn("third call: " + model.getAttribute("msg"));
+        log.warn(http.getId());
+        model.addAttribute("msg","hello world 444");
+        log.warn("containsAttribute(\"msg\")" + String.valueOf(model.containsAttribute("msg")));
+        log.warn((String) model.getAttribute("msg"));
+
         return "form_requestparam";
     }
 
