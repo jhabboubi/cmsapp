@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 public class MyAdvice {
 
 
-    @ExceptionHandler({SQLException.class, DataAccessException.class, Exception.class, SQLSyntaxErrorException.class, MyExceptions.class})
+    @ExceptionHandler({MyExceptions.class, SQLException.class, DataAccessException.class, Exception.class, SQLSyntaxErrorException.class})
     public RedirectView allExceptions(MyExceptions ex){
 
         Map<String,String> map = new LinkedHashMap<>();
@@ -34,8 +35,15 @@ public class MyAdvice {
 
     @ModelAttribute
     public void initModel(Model model){
-
         model.addAttribute("msg","hello world");
 
+    }
+
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleMaxSizeException(Model model, MaxUploadSizeExceededException e) {
+        model.addAttribute("message", "File is too large!");
+
+        return "upload_form";
     }
 }

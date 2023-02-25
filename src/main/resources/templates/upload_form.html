@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Bootstrap demo</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+            crossorigin="anonymous"
+    />
+    <link th:href="@{/css/mystyles.css}" rel="stylesheet"/>
+</head>
+<body>
+<main class="container">
+    <section class="row m-1">
+        <article class="col">
+            <form
+                    id="uploadForm"
+                    method="post"
+                    th:action="@{/images/upload}"
+                    enctype="multipart/form-data">
+                <input id="input-file" type="file" name="file" accept="image/png, image/jpeg"/>
+                <button class="btn btn-sm btn-outline-success float-right" type="submit">
+                    Upload
+                </button>
+            </form>
+
+            <div
+                    th:if="${message != null}"
+                    class="alert alert-secondary alert-dismissible fade show text-center message mt-3"
+                    role="alert">
+                [[${message}]]
+                <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+
+        </article>
+    </section>
+</main>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"
+></script>
+<script th:src="@{/javascript/scripts.js}"></script>
+</body>
+</html>

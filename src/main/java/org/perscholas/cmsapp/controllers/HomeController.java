@@ -13,17 +13,20 @@ import org.perscholas.cmsapp.service.StudentCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 
 @Controller
 @Slf4j
-@SessionAttributes(value = {"msg"})
+@SessionAttributes(value = {"msg", "newUser"})
 public class HomeController {
 
     StudentsRepoI studentsRepoI;
@@ -77,13 +80,6 @@ public class HomeController {
     public String studentForm(Model model,@SessionAttribute("msg") String msg, HttpSession http){
         model.addAttribute("student", new Students());
 
-        log.warn("student form method");
-        log.warn("second call: " + msg);
-        log.warn(http.getId());
-        model.addAttribute("msg","hello world 333");
-        log.warn("containsAttribute(\"msg\")" + String.valueOf(model.containsAttribute("msg")));
-        log.warn((String) model.getAttribute("msg"));
-
         return "form";
     }
 
@@ -133,6 +129,33 @@ public class HomeController {
         log.warn(String.format("my id is %d and my name is %s. email: %s", id, name,email));
         return "form_requestparam";
     }
+
+    @GetMapping("/formjs")
+    public String getTheForm(){
+        log.warn("form js");
+        return "formjs";
+    }
+//    @PostMapping("/postform")
+//    @ResponseBody
+//    public ResponseEntity<?> saveForm(@RequestParam int id, @RequestParam String name, @RequestParam String email,@RequestParam String password) throws Exception{
+//        Students s = new Students(id, name,email,password);
+//        log.warn(s.toString());
+//        studentsRepoI.save(s);
+//        return ResponseEntity.ok("saved to DB");
+//    }
+
+    @PostMapping("/postform")
+    @ResponseBody
+    public ResponseEntity<?> saveForm(@ModelAttribute Students s, @RequestParam("file")MultipartFile file) throws Exception{
+        //Students s = new Students(id, name,email,password);
+        log.warn(file.getOriginalFilename());
+
+        log.warn(s.toString());
+        file.transferTo(new File("/Users/habboubi/IdeaProjects/cmsapp/src/main/resources/static/"+file.getOriginalFilename()));
+        studentsRepoI.save(s);
+        return ResponseEntity.ok("saved to DB");
+    }
+
 
 
 

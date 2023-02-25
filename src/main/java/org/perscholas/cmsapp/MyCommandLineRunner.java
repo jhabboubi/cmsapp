@@ -8,6 +8,7 @@ import org.perscholas.cmsapp.dao.CoursesRepoI;
 import org.perscholas.cmsapp.dao.StudentsRepoI;
 import org.perscholas.cmsapp.models.Course;
 import org.perscholas.cmsapp.models.Students;
+import org.perscholas.cmsapp.service.FilesStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
@@ -22,13 +23,14 @@ public class MyCommandLineRunner implements CommandLineRunner {
     StudentsRepoI studentsRepoI;
 
     CoursesRepoI coursesRepoI;
-
+    FilesStorageServiceImpl filesStorageService;
 
 
     @Autowired
-    public MyCommandLineRunner(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI) {
+    public MyCommandLineRunner(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI, FilesStorageServiceImpl filesStorageService) {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
+        this.filesStorageService = filesStorageService;
     }
 
     @PostConstruct
@@ -41,6 +43,8 @@ public class MyCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         try {
+            filesStorageService.init();
+            log.warn("file init executed!");
             Students student = new Students("Jafer", "Jafer@gmail.com", "password");
             Students student2 = new Students("Mohammed", "Mohammed@gmail.com", "password");
             Students student3 = new Students("Anjana", "Anjana@gmail.com", "password");
