@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -19,26 +20,36 @@ import java.util.Set;
 @Table(name = "stu")
 @Slf4j
 @NoArgsConstructor
-@Setter
+
 @Getter
 @ToString
-@RequiredArgsConstructor
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Students {
 
+
+    @Setter
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-
+    @Setter
     @NonNull @NotBlank( message = "can't be blank")
     String name;
+    @Setter
     @NonNull @Email(message = "not a valid email")
     @Column(unique = true)
     String email;
     @NonNull @NotBlank(message = "can't be blank") @Size(min=3, message = "not less than 3 characters")
     String password;
 
+    public void setPassword(String password) {
+        this.password = new BCryptPasswordEncoder(4).encode(password);
+    }
 
-
+    public Students(@NonNull String name, @NonNull String email, @NonNull String password) {
+        this.name = name;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder(4).encode(password);
+    }
 
     @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})

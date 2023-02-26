@@ -4,8 +4,10 @@ import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.perscholas.cmsapp.dao.AuthGroupRepoI;
 import org.perscholas.cmsapp.dao.CoursesRepoI;
 import org.perscholas.cmsapp.dao.StudentsRepoI;
+import org.perscholas.cmsapp.models.AuthGroup;
 import org.perscholas.cmsapp.models.Course;
 import org.perscholas.cmsapp.models.Students;
 import org.perscholas.cmsapp.service.FilesStorageServiceImpl;
@@ -25,12 +27,14 @@ public class MyCommandLineRunner implements CommandLineRunner {
     CoursesRepoI coursesRepoI;
     FilesStorageServiceImpl filesStorageService;
 
+    AuthGroupRepoI  authGroupRepository;
 
     @Autowired
-    public MyCommandLineRunner(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI, FilesStorageServiceImpl filesStorageService) {
+    public MyCommandLineRunner(StudentsRepoI studentsRepoI, CoursesRepoI coursesRepoI, FilesStorageServiceImpl filesStorageService, AuthGroupRepoI authGroupRepository) {
         this.studentsRepoI = studentsRepoI;
         this.coursesRepoI = coursesRepoI;
         this.filesStorageService = filesStorageService;
+        this.authGroupRepository = authGroupRepository;
     }
 
     @PostConstruct
@@ -76,7 +80,10 @@ public class MyCommandLineRunner implements CommandLineRunner {
             studentsRepoI.saveAndFlush(student2);
             log.debug("s 2 : after courses"+ student2.toString());
 
-
+            authGroupRepository.save(new AuthGroup("Jafer@gmail.com", "ROLE_ADMIN"));
+            authGroupRepository.save(new AuthGroup("Jafer@gmail.com", "ROLE_USER"));
+            authGroupRepository.save(new AuthGroup("Mohammed@gmail.com", "ROLE_USER"));
+            authGroupRepository.save(new AuthGroup("Anjana@gmail.com", "ROLE_ADMIN"));
 
 //            (new Thread(new Runnable() {
 //                public void run() {

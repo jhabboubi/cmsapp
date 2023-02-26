@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -100,6 +101,7 @@ public class HomeController {
         return "form";
     }
  // @Controller
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/api/getAllStudents")
     public List<StudentDTO> getAllStudents() throws MyExceptions {
@@ -144,6 +146,10 @@ public class HomeController {
 //        return ResponseEntity.ok("saved to DB");
 //    }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
     @PostMapping("/postform")
     @ResponseBody
     public ResponseEntity<?> saveForm(@ModelAttribute Students s, @RequestParam("file")MultipartFile file) throws Exception{
