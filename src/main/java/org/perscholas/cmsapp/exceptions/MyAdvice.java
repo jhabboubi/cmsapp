@@ -22,16 +22,16 @@ import java.util.Map;
 public class MyAdvice {
 
 
-    @ExceptionHandler({MyExceptions.class, SQLException.class, DataAccessException.class, Exception.class, SQLSyntaxErrorException.class})
-    public RedirectView allExceptions(MyExceptions ex){
-
-        Map<String,String> map = new LinkedHashMap<>();
-        map.put(LocalDateTime.now().toString(),ex.getMessage());
-        log.debug(map.toString());
-        ex.printStackTrace();
-
-        return new RedirectView("/index");
-    }
+//    @ExceptionHandler({MyExceptions.class, SQLException.class, DataAccessException.class, Exception.class, SQLSyntaxErrorException.class})
+//    public RedirectView allExceptions(MyExceptions ex){
+//
+//        Map<String,String> map = new LinkedHashMap<>();
+//        map.put(LocalDateTime.now().toString(),ex.getMessage());
+//        log.debug(map.toString());
+//        ex.printStackTrace();
+//
+//        return new RedirectView("/index");
+//    }
 
     @ModelAttribute
     public void initModel(Model model){

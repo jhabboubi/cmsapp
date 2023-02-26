@@ -57,29 +57,58 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(4);
     }
 
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.csrf().disable().authorizeRequests()
+//                .requestMatchers("/", "/index").permitAll()
+//                .requestMatchers("/studentform", "/s").hasRole("ADMIN")
+//                .anyRequest().authenticated()
+//                .and()
+//                .formLogin().loginPage("/login").usernameParameter("email").passwordParameter("password")
+//                .loginProcessingUrl("/login/processing").defaultSuccessUrl("/")
+//                .failureUrl("/login?error=true").permitAll()
+//                .and()
+//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/")
+//                .invalidateHttpSession(true)
+//                .deleteCookies("JSESSIONID").and()
+//                .exceptionHandling().accessDeniedPage("/");
+//        return http.build();
+//    }
+//
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .requestMatchers("/", "index").permitAll()
-                .requestMatchers("/studentform", "/s").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().loginPage("/login").usernameParameter("email").passwordParameter("password")
-                .loginProcessingUrl("/login/processing").defaultSuccessUrl("/")
-                .failureUrl("/login?error=true").permitAll()
-                .and()
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID").and()
-                .exceptionHandling().accessDeniedPage("/");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/","/index","/css/**", "/javascript/**").permitAll()
+                        .requestMatchers("/studentform","/s").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .formLogin((form) -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .loginProcessingUrl("/login/processing")
+                        .defaultSuccessUrl("/model")
+                        .failureUrl("/login?error=true")
+                        .permitAll()
+                )
+                .logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .clearAuthentication(true)
+                        .permitAll()).exceptionHandling().accessDeniedPage("/?error=403");
+
+
+
         return http.build();
     }
 
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/img/**");
-    }
+//
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring().requestMatchers("/resources/**", "/static/**", "/css/**", "/javascript/**", "/img/**");
+//    }
 
 
 //    @Bean

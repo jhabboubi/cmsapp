@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.security.Principal;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 
@@ -44,7 +46,8 @@ public class HomeController {
 
 
     @GetMapping("/model")
-    public String model( HttpSession http, Model model, @ModelAttribute("msg") String msg){
+    public String model(Principal principal,HttpSession http, Model model, @ModelAttribute("msg") String msg){
+        log.warn(principal.getName());
         log.warn("first call: " + msg);
         log.warn(http.getId());
         model.addAttribute("msg","hello world 222");
@@ -78,15 +81,16 @@ public class HomeController {
     }
 
     @GetMapping("/studentform")
-    public String studentForm(Model model,@SessionAttribute("msg") String msg, HttpSession http){
+    public String studentForm(Principal principal,Model model,@SessionAttribute("msg") String msg, HttpSession http){
+        log.warn(principal.getName());
         model.addAttribute("student", new Students());
 
         return "form";
     }
 
     @PostMapping("/s")
-    public String studentProcess(@Valid @ModelAttribute("student") Students students, BindingResult bindingResult){
-
+    public String studentProcess(@Valid @ModelAttribute("student") Students students, BindingResult bindingResult, Principal principal){
+        log.warn(principal.getName());
         if(bindingResult.hasErrors()){
             log.error("Student has errors: " + students);
             log.error(bindingResult.getAllErrors().toString());
@@ -104,12 +108,14 @@ public class HomeController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseBody
     @GetMapping("/api/getAllStudents")
-    public List<StudentDTO> getAllStudents() throws MyExceptions {
+    public List<StudentDTO> getAllStudents(Principal principal) throws MyExceptions {
+        log.warn(principal.getName());
         return studentCoursesService.getAllStudents();
     }
 
     @GetMapping("/getform")
-    public String getTheForm(Model model, HttpSession http){
+    public String getTheForm(Principal principal,Model model, HttpSession http){
+        log.warn(principal.getName());
         log.warn("third call: " + model.getAttribute("msg"));
         log.warn(http.getId());
         model.addAttribute("msg","hello world 444");
@@ -120,20 +126,23 @@ public class HomeController {
     }
 
     @GetMapping("/path/{id}")
-    public String getUserWithID(@PathVariable(name = "id") int id){
+    public String getUserWithID(@PathVariable(name = "id") int id, Principal principal){
+        log.warn(principal.getName());
         log.warn(String.valueOf(id));
         log.warn(studentsRepoI.findById(id).toString());
         return "form_requestparam";
     }
 
     @PostMapping("/request")
-    public String requestParam(@RequestParam("id") int id, @RequestParam("name") String name, @RequestParam("email") String email){
+    public String requestParam(Principal principal,@RequestParam("id") int id, @RequestParam("name") String name, @RequestParam("email") String email){
+        log.warn(principal.getName());
         log.warn(String.format("my id is %d and my name is %s. email: %s", id, name,email));
         return "form_requestparam";
     }
 
     @GetMapping("/formjs")
-    public String getTheForm(){
+    public String getTheForm(Principal principal){
+        log.warn(principal.getName());
         log.warn("form js");
         return "formjs";
     }
@@ -152,7 +161,7 @@ public class HomeController {
     }
     @PostMapping("/postform")
     @ResponseBody
-    public ResponseEntity<?> saveForm(@ModelAttribute Students s, @RequestParam("file")MultipartFile file) throws Exception{
+    public ResponseEntity<?> saveForm(Principal principal, @ModelAttribute Students s, @RequestParam("file")MultipartFile file) throws Exception{
         //Students s = new Students(id, name,email,password);
         log.warn(file.getOriginalFilename());
 
