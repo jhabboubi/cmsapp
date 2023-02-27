@@ -171,6 +171,11 @@ public class HomeController {
         return ResponseEntity.ok("saved to DB");
     }
 
+    @GetMapping("/403")
+    public String access(){
+        return "403";
+    }
+
 
 
 

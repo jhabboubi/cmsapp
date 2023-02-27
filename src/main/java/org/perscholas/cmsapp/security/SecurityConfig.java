@@ -97,7 +97,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .clearAuthentication(true)
-                        .permitAll()).exceptionHandling().accessDeniedPage("/?error=403");
+                        .permitAll()).exceptionHandling().accessDeniedPage("/403");
 
 
 
