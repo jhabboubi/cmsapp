@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,10 +14,24 @@
   </head>
   <body>
     <main class="container">
-      <section class="row m-1">
-        <article class="col">
+      <section class="row m-1" >
+        <article class="col" sec:authorize="hasRole('ADMIN')">
           <p class="text-center" th:text="${info}"></p>
         </article>
+
+        <h2>Welcome</h2>
+        <p>Spring Security Thymeleaf tutorial</p>
+        <div sec:authorize="hasRole('USER')">Text visible to user.</div>
+        <div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+        <div sec:authorize="isAuthenticated()">
+          Text visible only to authenticated users.
+          First Name
+          <div th:text="${theStudent.name}"></div>
+          Authenticated username:
+          <div sec:authentication="name"></div>
+          Authenticated user roles:
+          <div sec:authentication="principal.authorities"></div>
+        </div>
         <article class="row">
           <table class="table">
             <thead>

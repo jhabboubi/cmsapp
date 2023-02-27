@@ -31,7 +31,7 @@ public class StudentAndCoursesService {
     @Transactional(rollbackOn = Exception.class)
     public List<Students> getAllStudents() throws Exception {
         List<Students> s = studentsRepoI.findAll();
-        s.removeAll(s);
+
         if(s.isEmpty()) {
 
             log.debug("empty list of students!");

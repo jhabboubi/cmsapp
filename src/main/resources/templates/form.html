@@ -60,6 +60,7 @@
             <span th:if="${inserted}" th:text="${inserted}" class="error text-warning text-danger"></span>
 
           </form>
+          <span th:if="${session.getStudent}" th:text="${session.getStudent}" class="error text-warning text-danger"></span>
         </article>
       </section>
     </main>

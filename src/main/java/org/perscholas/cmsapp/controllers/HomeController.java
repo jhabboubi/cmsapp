@@ -11,16 +11,18 @@ import org.perscholas.cmsapp.models.Students;
 import org.perscholas.cmsapp.service.StudentAndCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @Slf4j
-@SessionAttributes(value = {"msg"})
+@SessionAttributes(value = {"msg", "theStudent"})
 public class HomeController {
 
     StudentsRepoI studentsRepoI;
@@ -41,20 +43,23 @@ public class HomeController {
     }
 
     @GetMapping("/model")
-    public String model(Model model, HttpServletRequest httpServletRequest){
-        log.warn(model.getAttribute("msg").toString());
-        HttpSession session = httpServletRequest.getSession();
-        log.warn(session.getId());
-        session.setAttribute("msg", "changed in model method!!");
-
-
+    public String model(Model model, HttpSession http){
+        log.warn("the attr of session theStudent in model is " + http.getAttribute("theStudent"));
 
         return "model_page";
     }
 
     @GetMapping(value = {"/", "index"})
-    public String homePage(Model model, HttpServletRequest request) throws Exception {
+    public String homePage(Model model, HttpServletRequest request, HttpSession http) throws Exception {
+        Students ss = null;
+        Principal p = request.getUserPrincipal();
 
+        if(p != null){
+           ss =  studentsRepoI.findByEmail(p.getName()).get();
+           http.setAttribute("theStudent", ss);
+           log.warn("session attr theStudent " + http.getAttribute("theStudent").toString());
+
+        }
 
         log.info("i am in the index controller method");
 
@@ -65,6 +70,7 @@ public class HomeController {
 
         model.addAttribute("allStu",allStud);
         model.addAttribute("info", s);
+        model.addAttribute("theStudent", ss);
         for(Students x: allStud){
             System.out.println(x);
         }
@@ -72,7 +78,11 @@ public class HomeController {
     }
 
     @GetMapping("/studentform")
-    public String studentForm(Model model){
+
+    public String studentForm(Model model, Principal principal){
+        log.warn(principal.getName());
+        Students s = studentsRepoI.findByEmail(principal.getName()).get();
+        log.warn(s.toString());
         model.addAttribute("student", new Students());
 
         log.warn("student form method");
@@ -100,11 +110,10 @@ public class HomeController {
         return "/form";
     }
  // @Controller
+    @PreAuthorize("hasAuthority('DELETE')")
     @ResponseBody
     @GetMapping("/api/getAllStudents")
     public List<StudentDTO> getAllStudents(){
-
-
 
         return studentAndCoursesService.getStudentsEssInfo();
     }
@@ -125,6 +134,22 @@ public class HomeController {
     public String requestParam(@RequestParam("id") int id, @RequestParam("name") String name, @RequestParam("email") String email){
         log.warn(String.format("my id is %d and my name is %s. email: %s", id, name,email));
         return "form_requestparam";
+    }
+
+
+    @GetMapping("/login")
+    public String login(){
+        return "login_page";
+    }
+
+    @GetMapping("/403")
+    public String access(){
+        return "403";
+    }
+
+    @GetMapping("/error")
+    public String error(){
+        return "error";
     }
 
 

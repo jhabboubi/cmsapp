@@ -6,8 +6,10 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,11 +21,11 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@RequiredArgsConstructor
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Students {
 
-    @Id @NonNull@NotNull
+    @Id @NonNull
     Integer id;
 
     @NonNull
@@ -35,10 +37,20 @@ public class Students {
     @Email(message = "Provide a valid email address.", regexp = ".+@.+\\..+")
     String email;
 
-    @NonNull
+    @NonNull  @Setter(AccessLevel.NONE)
     String password;
 
 
+    public Students(@NonNull Integer id, @NonNull String name, @NonNull String email, @NonNull String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = new BCryptPasswordEncoder(4).encode(password);
+    }
+
+    public void setPassword(String password) {
+        this.password = new BCryptPasswordEncoder(4).encode(password);
+    }
 
     @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})

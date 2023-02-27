@@ -16,8 +16,33 @@
     <main class="container">
       <section class="row m-1">
         <article class="col">
-          <h1>Model Page</h1>
-          <span th:text="${session.theStudent}" class="error text-warning text-danger"></span>
+          <form method="post" th:action="@{/login/processing}"  >
+
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      name="password"
+
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <span th:if="${param.error}" th:text="${'Wrong username or password'}" class="error text-warning text-danger"></span>
+
+          </form>
         </article>
       </section>
     </main>
@@ -28,12 +53,5 @@
       crossorigin="anonymous"
     ></script>
     <script th:src="@{/javascript/scripts.js}"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.3/axios.min.js"
-      integrity="sha512-wS6VWtjvRcylhyoArkahZUkzZFeKB7ch/MHukprGSh1XIidNvHG1rxPhyFnL73M0FC1YXPIXLRDAoOyRJNni/g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-
   </body>
 </html>
